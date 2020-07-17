@@ -29,11 +29,16 @@ app.get('/api/timestamp', function(req, res){
 })
 
 app.get("/api/timestamp/:date_string", function(req, res){
-
-	if(new Date(req.params.date_string).toString() === 'Invalid Date'){
+	console.log(req.params.date_string)
+	var date = req.params.date_string
+	var dateToParse = (function () {
+		if(Date.parse(date)) return date;
+		return parseInt(date) ? parseInt(date) : date;
+	})()
+	if(isNaN(new Date(dateToParse))){
 		return res.json({error: 'Invalid Date'})
 	}else{
-		return res.json({unix: new Date(req.params.date_string).getTime(), utc: new Date(req.params.date_string)})		
+		return res.json({unix: new Date(dateToParse).getTime(), utc: new Date(dateToParse).toUTCString()})		
 	}
 
 })
